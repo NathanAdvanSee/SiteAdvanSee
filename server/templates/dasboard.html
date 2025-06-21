@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Inventário de TI</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div id="root">
+        <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            <div class="container mx-auto p-6 space-y-8">
+                <div class="text-center space-y-4">
+                    <h1 class="text-5xl font-bold bg-gradient-to-r from-green-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">Dashboard de Inventário de TI</h1>
+                    <p class="text-xl text-slate-300">Gerencie todos os seus equipamentos de TI em um só lugar</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm glass-effect p-6 border-green-500/20">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-400">Total de Equipamentos</p>
+                                <p class="text-3xl font-bold text-green-400">{{ total_assets }}</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-green-400"><line x1="22" x2="2" y1="12" y2="12"></line><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path><line x1="6" x2="6.01" y1="16" y2="16"></line><line x1="10" x2="10.01" y1="16" y2="16"></line></svg>
+                        </div>
+                    </div>
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm glass-effect p-6 border-blue-500/20">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-400">Online</p>
+                                <p class="text-3xl font-bold text-blue-400">{{ assets_online }}</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-blue-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                    </div>
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm glass-effect p-6 border-yellow-500/20">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-400">Manutenção</p>
+                                <p class="text-3xl font-bold text-yellow-400">{{ assets_maintenance }}</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-yellow-400"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                    </div>
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm glass-effect p-6 border-red-500/20">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-slate-400">Offline</p>
+                                <p class="text-3xl font-bold text-red-400">{{ assets_offline }}</p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-12 w-12 text-red-400"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div dir="ltr" data-orientation="horizontal" class="w-full">
+                    <div class="flex justify-center mb-8">
+                        <div class="glass-effect rounded-lg p-1">
+                            <a href="{{ url_for('dashboard') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 mr-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-2"><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>Visão Geral
+                            </a>
+                            <a href="{{ url_for('equipamentos_list') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-2"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>Equipamentos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm glass-effect p-6">
+                        <h3 class="text-2xl font-bold mb-6 text-center">Equipamentos por Categoria</h3>
+                        <div id="graph-category"></div>
+                    </div>
+
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm glass-effect p-6">
+                        <h3 class="text-2xl font-bold mb-6">Assets by Status</h3>
+                        <div id="graph-status"></div>
+                    </div>
+
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm glass-effect p-6">
+                        <h3 class="text-2xl font-bold mb-6">Atividade Recente</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-4 p-4 bg-slate-800/50 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-green-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                <div>
+                                    <p class="font-semibold">Desktop Desenvolvimento 01 voltou online</p>
+                                    <p class="text-sm text-slate-400">Há 2 horas</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-4 bg-slate-800/50 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-yellow-400"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <div>
+                                    <p class="font-semibold">Laptop Marketing 02 entrou em manutenção</p>
+                                    <p class="text-sm text-slate-400">Há 4 horas</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4 p-4 bg-slate-800/50 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-blue-400"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                                <div>
+                                    <p class="font-semibold">Novo servidor adicionado ao inventário</p>
+                                    <p class="text-sm text-slate-400">Ontem</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if user_role == 'admin' %}
+                    <div class="rounded-lg border bg-card text-card-foreground shadow-sm glass-effect p-6">
+                        <h3 class="text-2xl font-bold mb-6 text-center">Dashboard de Administrador</h3>
+                        <p class="text-slate-300">Conteúdo e ferramentas exclusivas para administradores.</p>
+                        </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/plotly_charts.js') }}"></script>
+    <script>
+        // Renderizar o gráfico de Assets por Categoria
+        renderPlotlyChart('graph-category', '{{ graph_category_json | safe }}');
+
+        // Renderizar o gráfico de Assets por Status
+        renderPlotlyChart('graph-status', '{{ graph_status_json | safe }}');
+    </script>
+</body>
+</html>
