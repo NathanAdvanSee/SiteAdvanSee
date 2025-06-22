@@ -1,5 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from server.rotas_raiz.rotas_autenticar.auth_rt import login_required, verify_user, generate_auth_token
+# server/rotas_raiz/logout_rt.py
+from flask import Blueprint, redirect, url_for, session, flash
+# Removed unused imports: render_template, request, verify_user, generate_auth_token
+# login_required is a decorator, not directly called here.
 
 logout_bp = Blueprint('logout', __name__)
 
@@ -10,4 +12,4 @@ def logout():
     session.pop('user_role', None)
     session.pop('jwt_token', None)
     flash('Você foi desconectado.', 'info')
-    return redirect(url_for('login'))
+    return redirect(url_for('login.login')) # Explicitly use blueprint.route_name

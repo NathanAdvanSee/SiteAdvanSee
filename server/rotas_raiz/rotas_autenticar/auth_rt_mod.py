@@ -18,30 +18,61 @@ def generate_auth_token(user_id, role, expires_in=3600):
             'role': role
         }
         # Ensure the secret key is treated as bytes if encode expects it
+        print(f"generate_auth_token => Payload JWT: {payload}")  # Debugging print
         secret_key = current_app.config['SECRET_KEY']
+        print(f"generate_auth_token => Secret Key from config (str): {secret_key}")
+        print(f"generate_auth_token => Type of secret_key_from_config: {type(secret_key)}")
+
         if isinstance(secret_key, str):
-            secret_key = secret_key.encode('utf-8')
+            secret_key_bytes = secret_key.encode('utf-8')
+            print(f"generate_auth_token => Encoded secret key (bytes): {secret_key_bytes}")
+            print(f"generate_auth_token => Type of encoded secret_key: {type(secret_key_bytes)}")
+        
+        else:
+            secret_key_bytes = secret_key
+            print(f"generate_auth_token => Secret key already bytes: {secret_key_bytes}")
+
 
         token = jwt.encode(
             payload,
             secret_key, # Use the potentially bytes-encoded secret key
             algorithm='HS256'
         )
-        return token.decode('utf-8') if isinstance(token, bytes) else token
+        print(f"generate_auth_token => Token JWT gerado: {token}")  # Debugging print
+        final_token = token.decode('utf-8') if isinstance(token, bytes) else token
+        print(f"generate_auth_token => Final JWT token string: {final_token}")
+        return final_token
     except Exception as e:
         return f"Error generating token: {str(e)}" # More descriptive error
 
+
+
 def decode_auth_token(token):
     """Decodifica o token JWT."""
+    print(f"decode_auth_token => Token recebido de decode: {token}")
+    print(f"decode_auth_token => Tipo do token recebido: {type(token)}")
     try:
         secret_key = current_app.config['SECRET_KEY']
+        print(f"decode_auth_token => Secret Key: {secret_key}")  # Debugging print
+        print(f"decode_auth_token => Secret Key de config (str): {secret_key}")
+        print(f"decode_auth_token => Tipo de Key: {type(secret_key)}")
+
         if isinstance(secret_key, str):
+            print(f"decode_auth_token => Codando secret_key")  # Debugging print
             secret_key = secret_key.encode('utf-8')
+        else:
+            secret_key_bytes = secret_key # Assume it's already bytes if not a string
+            print(f"decode_auth_token => Secret key already bytes: {secret_key_bytes}")
+
         payload = jwt.decode(token, secret_key, algorithms=['HS256'])
+        print(f"decode_auth_token => Payload decodificado: {payload}")  # Debugging print
+        print(f"decode_auth_token => Token Decadificado com Sucesso. Payload: {payload}")
         return payload
     except jwt.ExpiredSignatureError:
+        print("decode_auth_token => Token expirado")  # Debugging print
         return 'Signature expired. Please log in again.'
     except jwt.InvalidTokenError:
+        print("decode_auth_token => Token inválido")  # Debugging print
         return 'Invalid token. Please log in again.'
     except Exception as e: # Catch other potential errors during decoding
         return f'Error decoding token: {str(e)}'
@@ -82,10 +113,8 @@ def login_required(f):
         request.current_user = user
         request.user_role = user_data['role']
         return f(*args, **kwargs)
+    
     return decorated_function
-
-def is_authenticated():
-    pass
 
 def register_user(username, email, password, organization_id=None, role='user', first_name=None, last_name=None):
     """Registra um novo usuário no banco de dados."""

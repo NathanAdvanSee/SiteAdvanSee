@@ -1,7 +1,9 @@
+# server/rotas_raiz/register_rt.py
 
-from server.rotas_raiz.rotas_autenticar.auth_rt import login_required, verify_user, generate_auth_token, register_user
+# Only import what's directly used or needed for the context
+from server.rotas_raiz.rotas_autenticar.auth_rt import register_user
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from server.Config.Config import Config
+from server.Config.Config import Config # Not directly used in this snippet, but common to have if config values are needed.
 
 
 register_bp = Blueprint('register', __name__)
@@ -18,13 +20,13 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
-        
-        # Para simplificar, vou permitir registro sem organização_id.
-        # Em um cenário real, você pode ter um campo para isso ou atribuir a uma organização padrão.
+
+        # For simplicity, allowing registration without organization_id.
+        # In a real scenario, you might have a field for this or assign to a default organization.
         success, message = register_user(username, email, password)
         if success:
             flash('Registro bem-sucedido! Faça login para continuar.', 'success')
-            return redirect(url_for('login'))
+            return redirect(url_for('login.login')) # Use blueprint.route_name
         else:
             flash(f'Erro no registro: {message}', 'danger')
-    return render_template('register.html') # Você precisaria de um template register.html
+    return render_template('register.html') # You need to create a register.html template

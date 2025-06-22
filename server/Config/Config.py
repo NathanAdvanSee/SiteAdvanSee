@@ -6,8 +6,10 @@ class Config:
     EMAIL = "isac.admin@advansee.com.br"
     DB_PASSWORD = "kwa44fgjc8suf91kjsacaz"
     DB_PORT = "5432"
+    #JWT_SECRET_KEY  = '5wC2A3DRsZfkAc5HJqbvmoa73OEb4IyenFuxTj0cO0RJUkTUw9'
+    #SECRET_KEY      = 'LkTjm5au6gaE4kBVvG5jODJO2m8h6nsq4wJfAOH80wmcLJnemz'
     JWT_SECRET_KEY  = '5wC2A3DRsZfkAc5HJqbvmoa73OEb4IyenFuxTj0cO0RJUkTUw9'
-    SECRET_KEY      = 'LkTjm5au6gaE4kBVvG5jODJO2m8h6nsq4wJfAOH80wmcLJnemz'
+    SECRET_KEY      = '5wC2A3DRsZfkAc5HJqbvmoa73OEb4IyenFuxTj0cO0RJUkTUw9'
     SQLALCHEMY_DATABASE_URI = (
         f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )

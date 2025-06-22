@@ -1,10 +1,11 @@
-# auth.py
+# server/rotas_raiz/rotas_autenticar/auth_rt.py
 import jwt
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app, jsonify, request, redirect, url_for, session, flash
 from functools import wraps
 from server.Database.modelo_base_dados import db, User
+from server.Config.Config import Config # IMPORT Config directly
 
 
 
@@ -17,33 +18,60 @@ def generate_auth_token(user_id, role, expires_in=3600):
             'sub': user_id,
             'role': role
         }
-        # Ensure the secret key is treated as bytes if encode expects it
-        secret_key = current_app.config['SECRET_KEY']
-        if isinstance(secret_key, str):
-            secret_key = secret_key.encode('utf-8')
+        # Use Config.SECRET_KEY directly
+        secret_key_from_config = Config.SECRET_KEY
+        # print(f"generate_auth_token => Secret Key from Config.py (str): {secret_key_from_config}") # 
+        # print(f"generate_auth_token => Type of secret_key_from_config: {type(secret_key_from_config)}") # 
+
+        if isinstance(secret_key_from_config, str):
+            secret_key_bytes = secret_key_from_config.encode('utf-8')
+            # print(f"generate_auth_token => Encoded secret key (bytes): {secret_key_bytes}") # 
+            # print(f"generate_auth_token => Type of encoded secret_key: {type(secret_key_bytes)}") # 
+        else:
+            secret_key_bytes = secret_key_from_config # Assume it's already bytes if not a string
+            # print(f"generate_auth_token => Secret key already bytes: {secret_key_bytes}") # 
 
         token = jwt.encode(
             payload,
-            secret_key, # Use the potentially bytes-encoded secret key
+            secret_key_bytes,
             algorithm='HS256'
         )
-        return token.decode('utf-8') if isinstance(token, bytes) else token
+        final_token = token.decode('utf-8') if isinstance(token, bytes) else token
+        # print(f"generate_auth_token => Final JWT token string: {final_token}") # 
+        return final_token
     except Exception as e:
-        return f"Error generating token: {str(e)}" # More descriptive error
+        # print(f"generate_auth_token => Error: {str(e)}") # 
+        return f"Error generating token: {str(e)}"
 
 def decode_auth_token(token):
     """Decodifica o token JWT."""
+    # print(f"decode_auth_token => Token received for decoding: {token}") # 
+    # print(f"decode_auth_token => Type of token received: {type(token)}") # 
     try:
-        secret_key = current_app.config['SECRET_KEY']
-        if isinstance(secret_key, str):
-            secret_key = secret_key.encode('utf-8')
-        payload = jwt.decode(token, secret_key, algorithms=['HS256'])
+        # Use Config.SECRET_KEY directly
+        secret_key_from_config = Config.SECRET_KEY
+        # print(f"decode_auth_token => Secret Key from Config.py (str): {secret_key_from_config}") # 
+        # print(f"decode_auth_token => Type of secret_key_from_config: {type(secret_key_from_config)}") # 
+
+        if isinstance(secret_key_from_config, str):
+            secret_key_bytes = secret_key_from_config.encode('utf-8')
+            # print(f"decode_auth_token => Encoded secret key (bytes): {secret_key_bytes}") # 
+            # print(f"decode_auth_token => Type of encoded secret_key: {type(secret_key_bytes)}") # 
+        else:
+            secret_key_bytes = secret_key_from_config # Assume it's already bytes if not a string
+            # print(f"decode_auth_token => Secret key already bytes: {secret_key_bytes}") # 
+
+        payload = jwt.decode(token, secret_key_bytes, algorithms=['HS256'])
+        # print(f"decode_auth_token => Token decoded successfully. Payload: {payload}") # 
         return payload
     except jwt.ExpiredSignatureError:
+        # print("decode_auth_token => Signature expired.") # 
         return 'Signature expired. Please log in again.'
     except jwt.InvalidTokenError:
+        # print("decode_auth_token => Invalid token.") # 
         return 'Invalid token. Please log in again.'
-    except Exception as e: # Catch other potential errors during decoding
+    except Exception as e:
+        # print(f"decode_auth_token => Other error during decoding: {str(e)}") # 
         return f'Error decoding token: {str(e)}'
 
 def login_required(f):
@@ -83,9 +111,6 @@ def login_required(f):
         request.user_role = user_data['role']
         return f(*args, **kwargs)
     return decorated_function
-
-def is_authenticated():
-    pass
 
 def register_user(username, email, password, organization_id=None, role='user', first_name=None, last_name=None):
     """Registra um novo usuário no banco de dados."""
